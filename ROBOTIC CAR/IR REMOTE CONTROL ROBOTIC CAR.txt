@@ -1,0 +1,406 @@
+// IR REMOTE CONTROLLED ROBOTIC CAR
+
+#include<IRremote.h>
+
+#define motorAF 6
+#define motorAR 5 
+#define motorBF 11
+#define motorBR 10
+#define recvPin 3
+#define fwdLHT 4
+#define revLHT 8
+#define Horn 7
+
+bool onceHorn = LOW;
+bool oncefwdLHT = LOW;
+bool oncerevLHT = LOW;
+//int spd;
+unsigned int choice = 0x906F; // 5, random hex code ( choice != 0x00 )
+int cases[11] = { 0x9867,0xA25D,0x629D,0xE21D,0x22DD,0x2FD,0xC23D,0xE01F,0xA857,0x906F,0x38C7 }; // { 0,1,2,3,4,5,6,7,8,9,OK }
+
+int allCases[17] = { 0x9867,0xA25D,0x629D,0xE21D,0x22DD,0x2FD,0xC23D,0xE01F,0xA857,0x906F,0x6897,0xB04F,0x18E7,0x4AB5,0x10EF,0x5AA5,0x38C7 }; 
+// { 0,1,2,3,4,5,6,7,8,9,*,#,UP,DW,LT,RT,OK } this array is unused
+
+// Define IR Receiver and Results Objects
+IRrecv IR(recvPin);
+decode_results results;
+
+void setup() 
+{
+  //spd = 255;
+  
+  // Set pins as outputs:
+  pinMode(motorAF, OUTPUT);
+  pinMode(motorAR, OUTPUT);
+  pinMode(motorBF, OUTPUT);
+  pinMode(motorBR, OUTPUT);
+
+  pinMode(fwdLHT, OUTPUT);
+  pinMode(revLHT, OUTPUT);
+  pinMode(Horn, OUTPUT);
+
+  digitalWrite(motorAF, LOW);
+  digitalWrite(motorAR, LOW);
+  digitalWrite(motorBF, LOW);
+  digitalWrite(motorBR, LOW);
+
+  digitalWrite(fwdLHT, LOW);
+  digitalWrite(revLHT, LOW);
+  digitalWrite(Horn, LOW);
+ 
+  // Initialize serial communication at 9600 bits per second:
+  Serial.begin(9600);
+
+  // Enable the IR Receiver
+  IR.enableIRIn();
+  Serial.println();
+  Serial.print("IR Ready ... @Pin");
+  Serial.println(recvPin);
+  Serial.println(choice, HEX);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  void(* resetFunc) (void) = 0;
+  
+  if (choice != 0x00)
+  {
+    Serial.println();
+    Serial.println("Enter a number");
+    while (IR.decode() == 0x00) {
+    }
+    choice = IR.results.value;
+    Serial.println(choice, HEX);
+    delay(25);
+    
+    if (choice == 0x9867) // 0
+      goto THEN;
+    else if (choice == 0xFD50) // MUTE - TATA SKY
+      goto THEN;
+    else if (choice == 0xA25D) // 1
+      goto THEN;
+    else if (choice == 0x629D) // 2
+      goto THEN;
+    else if (choice == 0xE21D) // 3
+      goto THEN;
+    else if (choice == 0x22DD) // 4
+      goto THEN;
+    else if (choice == 0x2FD) // 5
+      goto THEN;
+    else if (choice == 0xC23D) // 6
+      goto THEN;
+    else if (choice == 0xE01F) // 7
+      goto THEN;
+    else if (choice == 0xA857) // 8
+      goto THEN;
+    else if (choice == 0x906F) // 9
+      goto THEN;
+    else if (choice == 0x6897) // *
+      goto THEN;
+    else if (choice == 0x466A) // FWD LHT - TATA SKY
+      goto THEN;
+    else if (choice == 0xB04F) // #
+      goto THEN;
+    else if (choice == 0xA736) // REV LHT - TATA SKY
+      goto THEN;
+    else if (choice == 0x18E7) // UP
+      goto THEN;
+    else if (choice == 0xB7E2) // UP - TATA SKY 
+      goto THEN;
+    else if (choice == 0x4AB5) // DW
+      goto THEN;
+    else if (choice == 0x19D3) // DW - TATA SKY 
+      goto THEN;
+    else if (choice == 0x10EF) // LT
+      goto THEN;
+    else if (choice == 0x95CD) // LT - TATA SKY 
+      goto THEN;
+    else if (choice == 0x5AA5) // RT
+      goto THEN;
+    else if (choice == 0x943A) // RT - TATA SKY 
+      goto THEN;
+    else if (choice == 0x38C7) // STOP
+      goto THEN;
+    else if (choice == 0x6ADE) // STOP - TATA SKY 
+      goto THEN;
+    else
+    {
+      Serial.println(choice, HEX);
+      Serial.println("Unknown HEX code, Gonna Reset Now"); // If any garbage/unknown code is generated, the system misbehaves, 
+      delay(100);                                          // to avoid it, it is made to reset
+      resetFunc();
+    }
+    
+    THEN: choice = choice;
+    delay(25);
+    IR.resume();
+    delay(50);
+  }
+
+  switch (choice)
+  {
+    case 0x38C7: // OK, STOP
+      digitalWrite(motorAF, LOW );
+      digitalWrite(motorAR, LOW ); 
+      
+      digitalWrite(motorBF, LOW );
+      digitalWrite(motorBR, LOW );
+      delay(1);
+      
+      Serial.println("STOP");
+      break;
+
+    case 0x6ADE: // OK, STOP - TATA SKY
+      digitalWrite(motorAF, LOW );
+      digitalWrite(motorAR, LOW ); 
+      
+      digitalWrite(motorBF, LOW );
+      digitalWrite(motorBR, LOW );
+      delay(1);
+      
+      Serial.println("STOP");
+      break;
+
+    case 0x18E7: // UP, FORWARD
+      digitalWrite(motorAF, HIGH);
+      digitalWrite(motorBF, HIGH);
+      
+      digitalWrite(motorAR, LOW);
+      digitalWrite(motorBR, LOW);
+      delay(1);
+      
+      Serial.println("FORWARD");
+      break;
+
+    case 0xB7E2: // UP, FORWARD - TATA SKY
+      digitalWrite(motorAF, HIGH);
+      digitalWrite(motorBF, HIGH);
+      
+      digitalWrite(motorAR, LOW);
+      digitalWrite(motorBR, LOW);
+      delay(1);
+      
+      Serial.println("FORWARD");
+      break;
+
+    case 0x4AB5: // DW, REVERSE
+      digitalWrite(motorBR, HIGH);
+      digitalWrite(motorAR, HIGH);
+      
+      digitalWrite(motorBF, LOW);
+      digitalWrite(motorAF, LOW);
+      delay(1);
+    
+      Serial.println("REVERSE");
+      break;
+
+    case 0x19D3: // DW, REVERSE - TATA SKY
+      digitalWrite(motorBR, HIGH);
+      digitalWrite(motorAR, HIGH);
+      
+      digitalWrite(motorBF, LOW);
+      digitalWrite(motorAF, LOW);
+      delay(1);
+    
+      Serial.println("REVERSE");
+      break;
+
+    case 0x10EF: // LT, LEFT
+      digitalWrite(motorAF, LOW);
+      digitalWrite(motorAR, LOW); 
+      digitalWrite(motorBR, LOW);
+      
+      digitalWrite(motorBF, HIGH);
+      delay(1);
+    
+      Serial.println("LEFT");
+      break;
+
+    case 0x95CD: // LT, LEFT - TATA SKY
+      digitalWrite(motorAF, LOW);
+      digitalWrite(motorAR, LOW); 
+      digitalWrite(motorBR, LOW);
+      
+      digitalWrite(motorBF, HIGH);
+      delay(1);
+    
+      Serial.println("LEFT");
+      break;
+
+    case 0x5AA5: // RT, RIGHT
+      digitalWrite(motorAF, HIGH);
+      
+      digitalWrite(motorAR, LOW);  
+      digitalWrite(motorBR, LOW);
+      digitalWrite(motorBF, LOW);
+      delay(1);
+    
+      Serial.println("RIGHT");
+      break;
+      
+    case 0x943A: // RT, RIGHT - TATA SKY
+      digitalWrite(motorAF, HIGH);
+      
+      digitalWrite(motorAR, LOW);  
+      digitalWrite(motorBR, LOW);
+      digitalWrite(motorBF, LOW);
+      delay(1);
+    
+      Serial.println("RIGHT");
+      break;
+
+    case 0x9867: // 0, HORN
+      if (onceHorn == LOW)
+      {
+        digitalWrite(Horn, HIGH);
+        Serial.println("HORN ON");
+        delay(1);
+        onceHorn = HIGH;
+      }
+      else
+      {
+        digitalWrite(Horn, LOW);
+        Serial.println("HORN OFF");
+        delay(1);
+        onceHorn = LOW;
+      }
+
+      break;
+
+    case 0xFD50: // 0, HORN - TATA SKY - MUTE
+      if (onceHorn == LOW)
+      {
+        digitalWrite(Horn, HIGH);
+        Serial.println("HORN ON");
+        delay(1);
+        onceHorn = HIGH;
+      }
+      else
+      {
+        digitalWrite(Horn, LOW);
+        Serial.println("HORN OFF");
+        delay(1);
+        onceHorn = LOW;
+      }
+
+      break;
+
+    case 0x6897: // *, FRONT LIGHT 0xB04F
+      if (oncefwdLHT == LOW)
+      {
+        digitalWrite(fwdLHT, HIGH);
+        Serial.println("FRONT LIGHT ON");
+        delay(1);
+        oncefwdLHT = HIGH;
+      }
+      else
+      {
+        digitalWrite(fwdLHT, LOW);
+        Serial.println("FRONT LIGHT OFF");
+        delay(1);
+        oncefwdLHT = LOW;
+      }
+
+      break;    
+
+    case 0x466A: // *, FRONT LIGHT 0xB04F - TATA SKY - RED
+      if (oncefwdLHT == LOW)
+      {
+        digitalWrite(fwdLHT, HIGH);
+        Serial.println("FRONT LIGHT ON");
+        delay(1);
+        oncefwdLHT = HIGH;
+      }
+      else
+      {
+        digitalWrite(fwdLHT, LOW);
+        Serial.println("FRONT LIGHT OFF");
+        delay(1);
+        oncefwdLHT = LOW;
+      }
+
+      break;    
+
+    case 0xB04F: // #, REAR LIGHT 
+      if (oncerevLHT == LOW)
+      {
+        digitalWrite(revLHT, HIGH);
+        Serial.println("REAR LIGHT ON");
+        delay(1);
+        oncerevLHT = HIGH;
+      }
+      else
+      {
+        digitalWrite(revLHT, LOW);
+        Serial.println("REAR LIGHT OFF");
+        delay(1);
+        oncerevLHT = LOW;
+      }
+
+      break;
+
+    case 0xA736: // #, REAR LIGHT - TATA SKY - BLUE
+      if (oncerevLHT == LOW)
+      {
+        digitalWrite(revLHT, HIGH);
+        Serial.println("REAR LIGHT ON");
+        delay(1);
+        oncerevLHT = HIGH;
+      }
+      else
+      {
+        digitalWrite(revLHT, LOW);
+        Serial.println("REAR LIGHT OFF");
+        delay(1);
+        oncerevLHT = LOW;
+      }
+
+      break;
+
+//    case 0xA25D: // 1
+//      spd = 32;
+//
+//      break;
+//
+//    case 0x629D: // 2
+//      spd = 64;
+//
+//      break;
+//
+//    case 0xE21D: // 3
+//      spd = 96;
+//
+//      break;
+//
+//    case 0x22DD: // 4
+//      spd = 128;
+//
+//      break;
+//
+//    case 0x2FD: // 5
+//      spd = 160;
+//
+//      break;
+//
+//    case 0xC23D: // 6
+//      spd = 192;
+//
+//      break;
+//
+//    case 0xE01F: // 7
+//      spd = 224;
+//
+//      break;
+//
+//    case 0xA857: // 8
+//      spd = 255;
+//
+//      break;
+      
+    default:
+      Serial.println("Invalid Choice/d");
+      choice = 0x906F; // 9, random hex code ( choice != 0x00 )
+      
+      break;
+  }
+}

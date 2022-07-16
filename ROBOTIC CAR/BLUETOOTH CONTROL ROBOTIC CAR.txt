@@ -1,0 +1,168 @@
+// REMOTE CONTROL BLUETOOTH ROBOTIC CAR
+
+//L293 Connection   
+  #define motorAF 7 // motor A(left) Forward
+  #define motorAR 2 // motor A(left) Reverse
+  #define motorBF 12 // motor A(right) Forward
+  #define motorBR 10 // motor B(right) Reverse
+    
+  #define fwdLHT 4 // Forward Headlight
+  #define revLHT 5 // Reverse backlight
+  #define Horn 6
+  
+//Useful Variables
+  int state;
+
+void setup() {
+    // Set pins as outputs:
+    pinMode(motorAF, OUTPUT);
+    pinMode(motorAR, OUTPUT);
+    pinMode(motorBF, OUTPUT);
+    pinMode(motorBR, OUTPUT);
+
+    pinMode(fwdLHT, OUTPUT);
+    pinMode(revLHT, OUTPUT);
+    pinMode(Horn  , OUTPUT);
+   
+    // Initialize serial communication at 9600 bits per second:
+    Serial.begin(9600);
+}
+ 
+void loop() 
+{
+  
+    if(Serial.available() > 0){     
+      state = Serial.read();   
+    }
+   Serial.println(state); 
+  //Change speed if state is equal from 0 to 4. Values must be from 0 to 255 (PWM)
+     
+  /***********************Forward****************************/
+  //If state is equal with letter 'F', car will go forward!
+    if (state == 'F') 
+    {
+  delay(1);    
+  digitalWrite (motorAF, HIGH );
+  delay(1);
+  digitalWrite(motorBF, HIGH );
+  delay(1);                       
+  
+  digitalWrite (motorAR, LOW );
+  delay(1);
+  digitalWrite(motorBR, LOW );
+  delay(1);
+    }
+  
+  /***********************Backward****************************/
+  //If state is equal with letter 'B', car will go backward
+    else if (state == 'B')
+    {
+  delay(1);
+  digitalWrite (motorBR, HIGH );
+  delay(1);
+  digitalWrite(motorAR, HIGH );
+  delay(1);                       
+  
+  digitalWrite (motorBF, LOW);
+  delay(1);
+  digitalWrite(motorAF, LOW );
+  delay(1);
+    }
+ 
+  /***************************Left*****************************/
+  //If state is equal with letter 'L', wheels will turn left
+    else if (state == 'L')
+    {
+  delay(1);
+  digitalWrite (motorAF, LOW );
+  delay(1);
+  digitalWrite(motorAR, LOW );
+  delay(1);                       
+  digitalWrite(motorBR, LOW );
+  delay(1);
+  
+  digitalWrite (motorBF, HIGH );
+  delay(1);
+    }
+    
+  /***************************Right*****************************/
+  //If state is equal with letter 'R', wheels will turn right
+    else if (state == 'R') 
+    {
+  delay(1);
+  digitalWrite (motorAF, HIGH );
+  delay(1);
+  
+  digitalWrite(motorAR, LOW );                       
+  delay(1);
+  digitalWrite (motorBF, LOW );
+  delay(1);
+  digitalWrite(motorBR, LOW );
+  delay(1);
+    }
+
+  /***************************Forward_Light*****************************/
+  //If state is equal with letter 'W', Forward_Light will turn ON
+    else if (state == 'W') 
+    {
+  digitalWrite (fwdLHT, HIGH );
+  delay(1);
+    }
+    
+   /***************************Forward_Light*****************************/
+  //If state is equal with letter 'W', Forward_Light will turn OFF
+    else if (state == 'w') 
+    {
+  digitalWrite (fwdLHT, LOW );
+  delay(1);
+    }
+
+  /***************************Reverse_Light*****************************/
+  //If state is equal with letter 'W', Reverse_Light will turn ON
+    else if (state == 'U') 
+    {
+  digitalWrite (revLHT, HIGH );
+  delay(1);
+    }
+
+  /***************************Reverse_Light*****************************/
+  //If state is equal with letter 'W', Reverse_Light will turn OFF
+    else if (state == 'u') 
+    {
+  digitalWrite (revLHT, LOW );
+  delay(1);
+    }  
+
+  /***************************Horn_ON*****************************/
+  //If state is equal with letter 'W', Horn will turn ON
+    else if (state == 'V') 
+    {
+  digitalWrite (Horn, HIGH );
+  delay(1);
+    }  
+
+  /***************************Horn_OFF*****************************/
+  //If state is equal with letter 'W', Horn will turn OFF
+    else if (state == 'v') 
+    {
+  digitalWrite (Horn, LOW );
+  delay(1);
+    }  
+
+  /***************************STOP*****************************/
+  //If state is equal with letter 'W', Car will STOP
+    else if (state == 'X')
+    {
+  delay(1);     
+  digitalWrite (motorAF, LOW );
+  delay(1);
+  digitalWrite(motorAR, LOW );
+  delay(1);                       
+  
+  digitalWrite (motorBF, LOW );
+  delay(1);
+  digitalWrite(motorBR, LOW );
+  delay(1);
+    }
+  
+}

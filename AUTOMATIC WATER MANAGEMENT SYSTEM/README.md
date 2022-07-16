@@ -1,0 +1,2 @@
+- Measurement of water consumption and water wastage prevention system by detecting water getting wasted in open unmonitored taps. 
+- Automatic water tank level control system.

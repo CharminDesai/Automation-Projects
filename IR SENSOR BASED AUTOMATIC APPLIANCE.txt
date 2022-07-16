@@ -1,0 +1,42 @@
+// IR SENSOR BASED AUTOMATIC APPLIANCE // 8051 MCU
+	
+#include<reg51.h>
+	
+sbit sensorPin = P2^1;
+sbit lightPin  = P2^2;
+sbit fanPin    = P2^3;
+int counter    = 0;
+	
+void MSDelay(unsigned int itime)
+{
+	unsigned int i,j;
+	for(i=0;i<itime;i++)
+		for(j=0;j<112;j++);
+}
+	
+void main()
+{
+	while(1)
+	{
+		sensorPin = 1;
+			
+		if ( sensorPin==0 )           // zero o/p from signal pin 
+		{
+			MSDelay(500);
+			counter = counter + 1;
+		}
+		if ( counter%2 != 0 )         // Somebody Enterred the Room
+		{                          
+			lightPin = 1;            
+			fanPin   = 1;            
+			MSDelay(100);                       
+		}                        														 	
+		else if ( counter%2 == 0 )    // Somebody Left the Room
+		{
+			lightPin = 0;
+			fanPin   = 0;
+			MSDelay(100);
+		}
+			
+	}
+}

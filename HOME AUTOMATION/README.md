@@ -1,2 +1,3 @@
-1) Simple IOT Automatic Appliance
-2) IR Sensor detection based Automatic Appliance
+IR Sensor detection based Automatic Appliance
+
+View Project :- https://youtu.be/HptojgceCMA

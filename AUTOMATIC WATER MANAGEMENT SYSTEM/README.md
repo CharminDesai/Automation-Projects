@@ -1,6 +1,6 @@
 # Automatic-Water-Management-System
 
-1. 1.	Level Control :- Automatic water tank level control system for underground and overhead tank. The level of water in tanks is measured through ultrasonic sensor, that constantly sends data to MCU which displays the level on LCD screen. Underground water pump turns automatically ON & OFF upon level of water in overhead tank.
+1. Level Control :- Automatic water tank level control system for underground and overhead tank. The level of water in tanks is measured through ultrasonic sensor, that constantly sends data to MCU which displays the level on LCD screen. Underground water pump turns automatically ON & OFF upon level of water in overhead tank.
 
 2.	Measurement :- Flow sensor in pipeline continuously measures flow rate and measured consumption. It is interfaced to microcontroller giving it live data that is displayed on LCD screen. 
 
